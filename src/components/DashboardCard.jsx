@@ -24,7 +24,7 @@ const pulseAnimation = keyframes`
 `;
 
 const DashboardCards = ({ data }) => {
-  console.log("DashboardCards data:", data); // Add this line to log the data
+  console.log("DashboardCards data:", data);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
