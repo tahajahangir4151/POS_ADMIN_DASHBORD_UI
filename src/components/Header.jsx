@@ -10,10 +10,6 @@ import {
   TextField,
   Button,
   useMediaQuery,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
   Divider,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -23,7 +19,6 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [dateError, setDateError] = useState("");
@@ -44,10 +39,6 @@ const Header = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
   };
 
   const validateDates = () => {
@@ -72,7 +63,6 @@ const Header = () => {
   const handleApplyDates = () => {
     if (validateDates()) {
       console.log("From:", fromDate, "To:", toDate);
-      setMobileOpen(false);
       if (!isMobile) {
         // Make API call here
         console.log("API call with dates:", fromDate, toDate);
@@ -125,19 +115,154 @@ const Header = () => {
     },
   };
 
-  const drawerContent = (
-    <Box sx={{ p: 2, width: 250 }}>
-      <List>
-        <ListItem>
-          <Box
+  return (
+    <>
+      <AppBar
+        position="static"
+        elevation={0}
+        sx={{
+          bgcolor: "#FF5800",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+        }}
+      >
+        <Toolbar>
+          <Typography
+            variant="h6"
+            component="div"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-              gap: 1,
+              flexGrow: 1,
+              color: "#ffffff",
+              textAlign: isMobile ? "center" : "left",
+              fontSize: "1.1rem",
+              fontWeight: 500,
             }}
           >
-            <Typography sx={{ minWidth: "45px", color: "#333333" }}>
+            Dashboard
+          </Typography>
+
+          {!isMobile && (
+            <Box
+              sx={{
+                display: "flex",
+                gap: 3,
+                position: "absolute",
+                left: "50%",
+                transform: "translateX(-50%)",
+                alignItems: "center",
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography sx={{ color: "#ffffff", minWidth: "45px" }}>
+                  From:
+                </Typography>
+                <TextField
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => {
+                    setFromDate(e.target.value);
+                    setDateError("");
+                  }}
+                  size="small"
+                  error={!!dateError}
+                  sx={commonTextFieldStyles}
+                />
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography sx={{ color: "#ffffff", minWidth: "45px" }}>
+                  To:
+                </Typography>
+                <TextField
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => {
+                    setToDate(e.target.value);
+                    setDateError("");
+                  }}
+                  size="small"
+                  error={!!dateError}
+                  sx={commonTextFieldStyles}
+                />
+              </Box>
+              {dateError && (
+                <Typography sx={{ color: "#ffffff", fontSize: "0.75rem" }}>
+                  {dateError}
+                </Typography>
+              )}
+              <Button
+                variant="contained"
+                onClick={handleApplyDates}
+                sx={{
+                  bgcolor: "#FF5800",
+                  "&:hover": {
+                    bgcolor: "#e65000",
+                  },
+                }}
+              >
+                Apply Dates
+              </Button>
+            </Box>
+          )}
+
+          <IconButton
+            size="large"
+            onClick={handleRefresh}
+            sx={{
+              color: "#ffffff",
+              "&:hover": {
+                bgcolor: "rgba(255, 255, 255, 0.1)",
+              },
+            }}
+          >
+            <RefreshIcon />
+          </IconButton>
+
+          <div>
+            <IconButton
+              size="large"
+              onClick={handleMenu}
+              sx={{
+                color: "#ffffff",
+                "&:hover": {
+                  bgcolor: "rgba(255, 255, 255, 0.1)",
+                },
+              }}
+            >
+              <AccountCircle />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              PaperProps={{
+                sx: {
+                  mt: 1,
+                  boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+                  "& .MuiMenuItem-root:hover": {
+                    bgcolor: "#fff5f0",
+                  },
+                },
+              }}
+            >
+              <MenuItem onClick={handleClose}>Change Password</MenuItem>
+              <Divider sx={{ my: 2 }} />
+              <MenuItem onClick={handleClose}>Logout</MenuItem>
+            </Menu>
+          </div>
+        </Toolbar>
+      </AppBar>
+
+      {isMobile && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+            mt: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Typography sx={{ color: "#333333", minWidth: "45px" }}>
               From:
             </Typography>
             <TextField
@@ -148,28 +273,12 @@ const Header = () => {
                 setDateError("");
               }}
               size="small"
-              fullWidth
               error={!!dateError}
-              InputProps={{
-                sx: {
-                  height: "40px",
-                  bgcolor: "#F4F6F8",
-                },
-              }}
+              sx={commonTextFieldStyles}
             />
           </Box>
-        </ListItem>
-        <Divider sx={{ my: 2 }} />
-        <ListItem>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-              gap: 1,
-            }}
-          >
-            <Typography sx={{ minWidth: "45px", color: "#333333" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Typography sx={{ color: "#333333", minWidth: "45px" }}>
               To:
             </Typography>
             <TextField
@@ -180,30 +289,18 @@ const Header = () => {
                 setDateError("");
               }}
               size="small"
-              fullWidth
               error={!!dateError}
-              InputProps={{
-                sx: {
-                  height: "40px",
-                  bgcolor: "#F4F6F8",
-                },
-              }}
+              sx={commonTextFieldStyles}
             />
           </Box>
-        </ListItem>
-        {dateError && (
-          <ListItem>
+          {dateError && (
             <Typography sx={{ color: "#d32f2f", fontSize: "0.75rem" }}>
               {dateError}
             </Typography>
-          </ListItem>
-        )}
-        <Divider sx={{ my: 2 }} />
-        <ListItem>
+          )}
           <Button
             variant="contained"
             onClick={handleApplyDates}
-            fullWidth
             sx={{
               bgcolor: "#FF5800",
               "&:hover": {
@@ -213,171 +310,9 @@ const Header = () => {
           >
             Apply Dates
           </Button>
-        </ListItem>
-      </List>
-    </Box>
-  );
-
-  useEffect(() => {
-    if (!isMobile && validateDates()) {
-      // Make API call here
-      console.log("API call with dates:", fromDate, toDate);
-    }
-  }, [fromDate, toDate, isMobile]);
-
-  return (
-    <AppBar
-      position="static"
-      elevation={0}
-      sx={{
-        bgcolor: "#FF5800",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-      }}
-    >
-      <Toolbar>
-        {isMobile && (
-          <IconButton
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{
-              color: "#ffffff",
-              "&:hover": {
-                bgcolor: "rgba(255, 255, 255, 0.1)",
-              },
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-        )}
-
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{
-            flexGrow: 1,
-            color: "#ffffff",
-            textAlign: isMobile ? "center" : "left",
-            fontSize: "1.1rem",
-            fontWeight: 500,
-          }}
-        >
-          Dashboard
-        </Typography>
-
-        {!isMobile && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: 3,
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              alignItems: "center",
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography sx={{ color: "#ffffff", minWidth: "45px" }}>
-                From:
-              </Typography>
-              <TextField
-                type="date"
-                value={fromDate}
-                onChange={(e) => {
-                  setFromDate(e.target.value);
-                  setDateError("");
-                }}
-                size="small"
-                error={!!dateError}
-                sx={commonTextFieldStyles}
-              />
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography sx={{ color: "#ffffff", minWidth: "45px" }}>
-                To:
-              </Typography>
-              <TextField
-                type="date"
-                value={toDate}
-                onChange={(e) => {
-                  setToDate(e.target.value);
-                  setDateError("");
-                }}
-                size="small"
-                error={!!dateError}
-                sx={commonTextFieldStyles}
-              />
-            </Box>
-            {dateError && (
-              <Typography sx={{ color: "#ffffff", fontSize: "0.75rem" }}>
-                {dateError}
-              </Typography>
-            )}
-          </Box>
-        )}
-
-        <IconButton
-          size="large"
-          onClick={handleRefresh}
-          sx={{
-            color: "#ffffff",
-            "&:hover": {
-              bgcolor: "rgba(255, 255, 255, 0.1)",
-            },
-          }}
-        >
-          <RefreshIcon />
-        </IconButton>
-
-        <div>
-          <IconButton
-            size="large"
-            onClick={handleMenu}
-            sx={{
-              color: "#ffffff",
-              "&:hover": {
-                bgcolor: "rgba(255, 255, 255, 0.1)",
-              },
-            }}
-          >
-            <AccountCircle />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            PaperProps={{
-              sx: {
-                mt: 1,
-                boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-                "& .MuiMenuItem-root:hover": {
-                  bgcolor: "#fff5f0",
-                },
-              },
-            }}
-          >
-            <MenuItem onClick={handleClose}>Change Password</MenuItem>{" "}
-            <Divider sx={{ my: 2 }} />
-            <MenuItem onClick={handleClose}>Logout</MenuItem>
-          </Menu>
-        </div>
-
-        <Drawer
-          anchor="left"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          PaperProps={{
-            sx: {
-              backgroundColor: "#ffffff",
-              "& .MuiListItem-root": {
-                color: "#333333",
-              },
-            },
-          }}
-        >
-          {drawerContent}
-        </Drawer>
-      </Toolbar>
-    </AppBar>
+        </Box>
+      )}
+    </>
   );
 };
 
